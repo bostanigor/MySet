@@ -1,0 +1,12 @@
+/Users/admin/homework/MySet/MySet/bin/Debug/netcoreapp3.1/MySet.deps.json
+/Users/admin/homework/MySet/MySet/bin/Debug/netcoreapp3.1/MySet.runtimeconfig.json
+/Users/admin/homework/MySet/MySet/bin/Debug/netcoreapp3.1/MySet.runtimeconfig.dev.json
+/Users/admin/homework/MySet/MySet/bin/Debug/netcoreapp3.1/MySet.dll
+/Users/admin/homework/MySet/MySet/bin/Debug/netcoreapp3.1/MySet.pdb
+/Users/admin/homework/MySet/MySet/obj/Debug/netcoreapp3.1/MySet.csprojAssemblyReference.cache
+/Users/admin/homework/MySet/MySet/obj/Debug/netcoreapp3.1/MySet.AssemblyInfoInputs.cache
+/Users/admin/homework/MySet/MySet/obj/Debug/netcoreapp3.1/MySet.AssemblyInfo.cs
+/Users/admin/homework/MySet/MySet/obj/Debug/netcoreapp3.1/MySet.csproj.CoreCompileInputs.cache
+/Users/admin/homework/MySet/MySet/obj/Debug/netcoreapp3.1/MySet.dll
+/Users/admin/homework/MySet/MySet/obj/Debug/netcoreapp3.1/MySet.pdb
+/Users/admin/homework/MySet/MySet/obj/Debug/netcoreapp3.1/MySet.genruntimeconfig.cache
