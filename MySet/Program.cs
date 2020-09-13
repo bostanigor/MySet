@@ -37,6 +37,7 @@ namespace MySet
 
         public MySet(int[] lefts, int[] rights)
         {
+            // TODO: Add optimization like merging close values in one interval (ex. 1, 2, 3 to 1..3)  
             _lefts = lefts;
             _rights = rights;
         }
@@ -51,64 +52,67 @@ namespace MySet
 
         public MySet Merge(MySet other)
         {
-            var newLefts = new List<int>{int.MinValue};
-            var newRights = new List<int>{int.MinValue};
+            var newLefts = new List<int>();
+            var newRights = new List<int>();
             int i_1 = 1;
             int i_2 = 1;
+            int lastLeft = int.MinValue;
+            int lastRight = int.MinValue;
             MySet lastObject;
-            while (true)
+            while (i_1 < this._lefts.Length && i_2 < other._lefts.Length)
             {
                 var left_1 = this._lefts[i_1];
                 var left_2 = other._lefts[i_2];
                 var right_1 = this._rights[i_1];
                 var right_2 = other._rights[i_2];
-                int leftNew;
-                int rightNew;
-                if (left_1 < left_2)
+                
+                if (left_1 <= lastRight)
                 {
-                    leftNew = left_1;
-                    if (right_1 < left_2)
-                        rightNew = right_1;
-                    else {
-                        rightNew = right_1 <= right_2 ? right_2 : right_1;
-                        i_2++;
-                    }
+                    if (right_1 > lastRight)
+                        lastRight = right_1;
                     i_1++;
+                }
+                else if (left_2 <= lastRight)
+                {
+                    if (right_2 > lastRight)
+                        lastRight = right_2;
+                    i_2++;
                 }
                 else
                 {
-                    leftNew = left_2;
-                    if (right_2 < left_1)
-                        rightNew = right_2;
-                    else {
-                        rightNew = right_2 <= right_1 ? right_1 : right_2;
+                    newLefts.Add(lastLeft);
+                    newRights.Add(lastRight);
+                    if (left_1 < left_2)
+                    {
+                        lastLeft = left_1;
+                        lastRight = right_1;
                         i_1++;
                     }
-                    i_2++;
-                }
-                newLefts.Add(leftNew);
-                newRights.Add(rightNew);
-                
-                if (i_1 == this._lefts.Length)
-                {
-                    for (; i_2 < other._lefts.Length; i_2++)
+                    else
                     {
-                        newLefts.Add(other._lefts[i_2]);
-                        newRights.Add(other._rights[i_2]);
+                        lastLeft = left_2;
+                        lastRight = right_2;
+                        i_2++;
                     }
-                    break;
-                }
-                if (i_2 == other._lefts.Length)
-                {
-                    for (; i_1 < this._lefts.Length; i_1++)
-                    {
-                        newLefts.Add(this._lefts[i_1]);
-                        newRights.Add(this._rights[i_1]);
-                    }
-                    break;
                 }
             }
+            newLefts.Add(lastLeft);
+            newRights.Add(lastRight);
+            var unfinishedSet = i_1 == this._lefts.Length ? other : this;
+            var i = i_1 == this._lefts.Length ? i_2 : i_1;
+            for (; i < unfinishedSet._lefts.Length; i++)
+            {
+                newLefts.Add(unfinishedSet._lefts[i]);
+                newRights.Add(unfinishedSet._rights[i]);
+            }
             return new MySet(newLefts.ToArray(), newRights.ToArray());
+        }
+
+        public MySet Substract(MySet set)
+        {
+            var newLefts = new List<int>();
+            var newRights = new List<int>();
+            return null;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -165,8 +169,17 @@ namespace MySet
     {
         static void Main(string[] args)
         {
+            // var set1 = new MySet("1..10,22,28,30..31");
+            // var set2 = new MySet("5..8,22,23,24,32..35");
+            
             var set1 = new MySet("1..10,22,28,30..31");
-            var set2 = new MySet("5..8,22,23,24,32..35");
+            var set2 = new MySet("5..15,22,23,24,32..35");
+            
+            // var set1 = new MySet("1..22,23");
+            // var set2 = new MySet("5..8,22,23,32..35");
+            
+            // var set1 = new MySet("5,6,7,22");
+            // var set2 = new MySet("1..22,23");
             var set3 = set1.Merge(set2);
             foreach (var x in set3)
             {
