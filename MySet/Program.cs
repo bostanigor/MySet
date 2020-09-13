@@ -50,7 +50,7 @@ namespace MySet
             return false;
         }
 
-        public MySet Merge(MySet other)
+        public MySet Union(MySet other)
         {
             var newLefts = new List<int>();
             var newRights = new List<int>();
@@ -108,11 +108,84 @@ namespace MySet
             return new MySet(newLefts.ToArray(), newRights.ToArray());
         }
 
-        public MySet Substract(MySet set)
+        public MySet Substraction(MySet other)
         {
-            var newLefts = new List<int>();
-            var newRights = new List<int>();
-            return null;
+            var newLefts = new List<int>() { int.MinValue };
+            var newRights = new List<int>() { int.MinValue };
+            var i_1 = 1;
+            var i_2 = 1;
+            var lastLeft = this._lefts[1];
+            var lastRight = this._rights[1];
+            while (true)
+            {
+                if (i_2 == other._lefts.Length)
+                {
+                    newLefts.Add(lastLeft);
+                    newRights.Add(lastRight);
+                    for (i_1++; i_1 < this._lefts.Length; i_1++)
+                    {
+                        newLefts.Add(this._lefts[i_1]);
+                        newRights.Add(this._rights[i_1]);
+                    }
+                    break;
+                }
+                
+                var left_1 = this._lefts[i_1];
+                var left_2 = other._lefts[i_2];
+                var right_1 = this._rights[i_1];
+                var right_2 = other._rights[i_2];
+
+                if (lastLeft > lastRight)
+                {
+                    i_1++;
+                    if (i_1 == this._lefts.Length)
+                        break;
+                    lastLeft = this._lefts[i_1];
+                    lastRight = this._rights[i_1];
+                    continue;
+                }
+
+                if (left_2 > lastRight)
+                {
+                    newLefts.Add(lastLeft);
+                    newRights.Add(lastRight);
+                    i_1++;
+                    if (i_1 == this._lefts.Length)
+                        break;
+                    lastLeft = this._lefts[i_1];
+                    lastRight = this._rights[i_1];
+                    continue;
+                }
+                if (right_2 < lastLeft)
+                {
+                    i_2++;
+                    if (i_2 == other._lefts.Length)
+                    {
+                        newLefts.Add(lastLeft);
+                        newRights.Add(lastRight);
+                        for (i_1++; i_1 < this._lefts.Length; i_1++)
+                        {
+                            newLefts.Add(this._lefts[i_1]);
+                            newRights.Add(this._rights[i_1]);
+                        }
+                        break;
+                    }
+                }
+                else
+                {
+                    if (left_2 <= left_1)
+                        lastLeft = right_2 + 1;
+                    else
+                    {
+                        newLefts.Add(lastLeft);
+                        newRights.Add(left_2 - 1);
+                        if (right_2 < lastRight)
+                            i_2++;
+                        lastLeft = right_2 + 1;
+                    }
+                }
+            }
+            return new MySet(newLefts.ToArray(), newRights.ToArray());
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -180,12 +253,17 @@ namespace MySet
             
             // var set1 = new MySet("5,6,7,22");
             // var set2 = new MySet("1..22,23");
-            var set3 = set1.Merge(set2);
-            foreach (var x in set3)
-            {
-                Console.Write(x);
-                Console.Write(" ");
-            }
+            
+            var set3 = new MySet("5..10,15..25,26,27,28,30..33");
+            var set4 = new MySet("1,2,6..7,9..13,15..17,26,28,31");
+            // 5 8 18-25 27 30 32 33
+            
+            foreach (var x in set1.Union(set2))
+                Console.Write($"{x} ");
+            Console.WriteLine();
+            foreach (var x in set3.Substraction(set4))
+                Console.Write($"{x} ");
+
             Console.WriteLine("Hello World!");
         }
     }
