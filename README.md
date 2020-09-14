@@ -11,4 +11,7 @@
 * `MySet Union(MySet other)` или `+(MySet other)` - объединение множеств
 * `MySet Difference(MySet other)` или `-(MySet other)` - вычитание множеств
 * `MySet Intersection(MySet other)` или `*(MySet other)` - пересечение множеств
-* `bool Contains(int x)` - проверка нахождения числа 
+* `bool Contains(int x)` - проверка нахождения числа
+
+### Реализация
+MySet хранит 2 массива границ интервалов - `_lefts` и `_rights`. Таким образом количество занимаемой памяти зависит от количества интервалов при инициализации.
