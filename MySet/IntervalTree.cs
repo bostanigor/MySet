@@ -25,10 +25,37 @@ namespace MySet
 
         public IntervalTree(List<MyRange> intervals)
         {
+            // Sort intervals by Min value
             intervals.Sort((x, y) => x.Min.CompareTo(y.Min));
             root = new TreeNode(MergeIntervals(intervals).ToArray());
         }
+        
+        public IEnumerator<int> GetEnumerator()
+        {
+            foreach (var x in RecursiveIEnum(root))
+                yield return x;
+        }
 
+        public bool Contains(int x)
+        {
+            var node = root;
+            while (node != null)
+            {
+                if (x <= node.xMid)
+                    if (x >= node.intMin)
+                        return true;
+                    else
+                        node = node.left;
+                else if (x <= node.intMax)
+                    return true;
+                else
+                    node = node.right;
+            }
+
+            return false;
+        }
+
+        /// Merge overlapping intervals (ex. 0..10, 7..15 -> 0..15) 
         private List<MyRange> MergeIntervals(List<MyRange> intervals)
         {
             var result = new List<MyRange>();
@@ -42,8 +69,8 @@ namespace MySet
                 else
                 {
                     result.Add(new MyRange(intMin, intMax));
-                    intMin = intervals[0].Min;
-                    intMax = intervals[0].Max;
+                    intMin = intervals[i].Min;
+                    intMax = intervals[i].Max;
                 }
             }
             result.Add(new MyRange(intMin, intMax));
@@ -51,13 +78,28 @@ namespace MySet
             return result;
         }
         
+        private IEnumerable<int> RecursiveIEnum(TreeNode node)
+        {
+            if (node.left != null)
+                foreach (int x in RecursiveIEnum(node.left))
+                    yield return x;
+                    
+            for (int x = node.intMin; x <= node.intMax; x++)
+                yield return x;
+            
+            if (node.right != null)
+                foreach (int x in RecursiveIEnum(node.right))
+                    yield return x;
+        }
+        
+        
         private class TreeNode
         {
-            private int xMid;
-            private int intMin, intMax; // Interval borders
+            public int xMid;
+            public int intMin, intMax; // Interval borders
         
-            private TreeNode parent;
-            private TreeNode left, right;
+            public TreeNode parent;
+            public TreeNode left, right;
         
             public TreeNode(MyRange[] intervals, TreeNode parent = null)
             {
@@ -72,7 +114,7 @@ namespace MySet
                 {
                     if (intervals[i].Count > middle)
                     {
-                        this.xMid = intervals[i].Min + middle; // TODO: Check borders
+                        this.xMid = intervals[i].Min + middle;
                         this.intMin = intervals[i].Min;
                         this.intMax = intervals[i].Max;
                         this.parent = parent;

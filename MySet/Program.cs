@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MySet
 {
@@ -34,12 +35,17 @@ namespace MySet
             // foreach (var x in set5.Intersection(set6))
             //     Console.Write($"{x} ");
             
-            var tree = new IntervalTree(new MyRange[]{
+            var tree = new IntervalTree(new List<MyRange>{
                     new MyRange(0, 10), 
                     new MyRange(13, 15), 
                     new MyRange(17, 20)
                 }
             );
+
+            foreach (var x in tree)
+            {
+                Console.Write($"{x} ");
+            }
 
             Console.WriteLine("Hello World!");
         }
