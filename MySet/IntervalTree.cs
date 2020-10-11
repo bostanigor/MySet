@@ -147,6 +147,65 @@ namespace MySet
             }
             return new IntervalTree(newRanges.ToArray());
         }
+
+        public IntervalTree Difference(IntervalTree other)
+        {
+            var newRanges = new List<MyRange>();
+            var intervals1 = this.RecursiveIEnumRange(this.root).GetEnumerator();
+            var intervals2 = other.RecursiveIEnumRange(other.root).GetEnumerator();
+            bool notEmpty1 = intervals1.MoveNext();
+            bool notEmpty2 = intervals2.MoveNext();
+            var lastMin = intervals1.Current.Min;
+            var lastMax = intervals1.Current.Max;
+
+            while (notEmpty1 && notEmpty2)
+            {
+                var min1 = intervals1.Current.Min;
+                var min2 = intervals2.Current.Min;
+                var max1 = intervals1.Current.Max;
+                var max2 = intervals2.Current.Max;
+
+                if (lastMin > lastMax)
+                {
+                    notEmpty1 = intervals1.MoveNext();
+                    lastMin = intervals1.Current.Min;
+                    lastMax = intervals1.Current.Max;
+                    continue;
+                }
+
+                if (min2 > lastMax)
+                {
+                    newRanges.Add(new MyRange(lastMin, lastMax));
+                    notEmpty1 = intervals1.MoveNext();
+                    lastMin = intervals1.Current.Min;
+                    lastMax = intervals1.Current.Max;
+                    continue;
+                }
+
+                if (max2 < lastMin)
+                    notEmpty2 = intervals2.MoveNext();
+                else
+                {
+                    if (min2 <= min1)
+                        lastMin = max2 + 1;
+                    else
+                    {
+                        newRanges.Add(new MyRange(lastMin, min2 - 1));
+                        if (max2 < lastMax)
+                            notEmpty2 = intervals2.MoveNext();
+                        lastMin = max2 + 1;
+                    }
+                }
+            }
+            if (notEmpty1)
+            {
+                newRanges.Add(new MyRange(lastMin, lastMax)); 
+                while (intervals1.MoveNext())
+                    newRanges.Add(intervals1.Current);
+            }
+
+            return new IntervalTree(newRanges.ToArray());
+        }
         
         /// Merge overlapping intervals (ex. 0..10, 7..15 -> 0..15) 
         private List<MyRange> MergeIntervals(MyRange[] intervals)
