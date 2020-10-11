@@ -7,17 +7,15 @@
 
 ### Пример инициализации IntervalTree
 `
-var tree = new IntervalTree(new List<MyRange>{
+var tree = new IntervalTree(
                     new MyRange(0, 10), 
                     new MyRange(13, 15), 
-                    new MyRange(17, 20)
-                }
+                    new MyRange(17, 20)                
             );
-var tree = new IntervalTree(new List<MyRange>{
+var tree = new IntervalTree(
                     new MyRange(0, 10), 
                     new MyRange(5, 15), 
-                    new MyRange(17, 20)
-                }
+                    new MyRange(17, 20)                
             );
 `
 ### Реализация
@@ -28,23 +26,19 @@ IntervalTree содержит `TreeNode root`.
 При инициализации `IntervalTree` интервалы сортируются по левой границе, а пересекающиеся интервалы объединяются.
 
 ### Методы класса
-* `IEnumerator<int> GetEnumerator()` - для реализации `foreach`
+* `IEnumerator IEnumerable.GetEnumerator()` - для реализации `foreach`
 * `bool Contains(int x)` - проверка на наличие элемента в дереве. `O(logN)`
+* `IntervalTree Union(IntervalTree other)` - объединение интервалов деревьев. `O(n + m)`
+* `IntervalTree Intersection(IntervalTree other)` - пересечение интервалов деревьев. `O(n + m)`
+* `IntervalTree Difference(IntervalTree other)` - разность интервалов деревьев. `O(n + m)`
 
 # MySet
 Реализация множества, хранящего интервалы целочисленных значений.
 
 `MySet` реализует интерфейс `IEnumerable`
 
+Является оберткой над `IntervalTree`. Содержит те же методы, что и `IntervalTree`. 
+
 ### Пример инициализации множества
-* `var set = new MySet("1..4");` Хранит значения 1, 2, 3, 4
-* `var set = new MySet("1..4, 6, 8..10");` Хранит значения 1, 2, 3, 4, 6, 8, 9, 10
-
-### Методы класса
-* `MySet Union(MySet other)` или `+(MySet other)` - объединение множеств
-* `MySet Difference(MySet other)` или `-(MySet other)` - вычитание множеств
-* `MySet Intersection(MySet other)` или `*(MySet other)` - пересечение множеств
-* `bool Contains(int x)` - проверка нахождения числа
-
-### Реализация
-MySet хранит 2 массива границ интервалов - `_lefts` и `_rights`. Таким образом количество занимаемой памяти зависит от количества интервалов при инициализации.
+* `var set = new MySet(new MyRange(0, 10), new MyRange(13, 15), new MyRange(17, 20));`
+* `var set = new MySet(HelperMethods.MyRangesFromString("1..4, 6, 8..10"));`
