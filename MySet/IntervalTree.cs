@@ -55,7 +55,7 @@ namespace MySet
 
             return false;
         }
-
+        
         public IntervalTree Union(IntervalTree other)
         {
             var intervals1 = this.RecursiveIEnumRange(this.root).GetEnumerator();
@@ -107,8 +107,47 @@ namespace MySet
 
             return new IntervalTree(newRanges.ToArray());
         }
-        
 
+        public IntervalTree Intersection(IntervalTree other)
+        {
+            var newRanges = new List<MyRange>();
+            var intervals1 = this.RecursiveIEnumRange(this.root).GetEnumerator();
+            var intervals2 = other.RecursiveIEnumRange(other.root).GetEnumerator();
+            bool notEmpty1 = intervals1.MoveNext();
+            bool notEmpty2 = intervals2.MoveNext();
+            while (notEmpty1 && notEmpty2)
+            {
+                var min1 = intervals1.Current.Min;
+                var min2 = intervals2.Current.Min;
+                var max1 = intervals1.Current.Max;
+                var max2 = intervals2.Current.Max;
+
+                if (max2 < min1)
+                {
+                    notEmpty2 = intervals2.MoveNext();
+                    continue;
+                }
+                if (max1 < min2)
+                {
+                    notEmpty1 = intervals1.MoveNext();
+                    continue;
+                }
+                
+                var newMin = Math.Max(min1, min2);
+                if (max2 <= max1)
+                {
+                    newRanges.Add(new MyRange(newMin, max2));
+                    notEmpty2 = intervals2.MoveNext();
+                }
+                else
+                {
+                    newRanges.Add(new MyRange(newMin, max1));
+                    notEmpty1 = intervals1.MoveNext();
+                }
+            }
+            return new IntervalTree(newRanges.ToArray());
+        }
+        
         /// Merge overlapping intervals (ex. 0..10, 7..15 -> 0..15) 
         private List<MyRange> MergeIntervals(MyRange[] intervals)
         {
