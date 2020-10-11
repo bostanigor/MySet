@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MySet
 {
-    public class MySet : IEnumerable
+    public class MySet
     {
         private readonly int[] _lefts;
         private readonly int[] _rights;        
@@ -214,16 +214,6 @@ namespace MySet
     
         public static MySet operator *(MySet left, MySet right)
             => left.Intersection(right);
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return (IEnumerator) GetEnumerator();
-        }
-
-        public MySetEnum GetEnumerator()
-        {
-            return new MySetEnum(_lefts, _rights);
-        }
     }
     
     

@@ -34,20 +34,14 @@ namespace MySet
             // Console.WriteLine();
             // foreach (var x in set5.Intersection(set6))
             //     Console.Write($"{x} ");
-            
-            var tree = new IntervalTree(new List<MyRange>{
-                    new MyRange(0, 10), 
-                    new MyRange(13, 15), 
-                    new MyRange(17, 20)
-                }
-            );
 
-            foreach (var x in tree)
-            {
+            var set1 = new IntervalTree(new MyRange(1, 10), new MyRange(22, 22), new MyRange(28, 28), new MyRange(30, 31));
+            var set2 = new IntervalTree(new MyRange(5, 8), new MyRange(22, 22), new MyRange(23, 23), new MyRange(24, 24), new MyRange(32, 35));
+
+            foreach (var x in set1.Union(set2))
                 Console.Write($"{x} ");
-            }
 
-            Console.WriteLine("Hello World!");
+                Console.WriteLine("Hello World!");
         }
     }
 }
