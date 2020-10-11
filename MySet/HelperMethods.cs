@@ -5,7 +5,7 @@ namespace MySet
 {
     public static class HelperMethods
     {
-        public static IntervalTree IntervalTreeFromString(string desc)
+        public static MyRange[] MyRangesFromString(string desc)
         {
             var newRanges = new List<MyRange>();
             foreach (var range in desc.Split(','))
@@ -22,27 +22,7 @@ namespace MySet
                     );
             }
 
-            return new IntervalTree(newRanges.ToArray());
-        }
-        
-        public static MySet MySetFromString(string desc)
-        {
-            var newRanges = new List<MyRange>();
-            foreach (var range in desc.Split(','))
-            {
-                var temp = range.Split("..");
-                if (temp.Length == 1)
-                {
-                    var val = Int32.Parse(temp[0]);
-                    newRanges.Add(new MyRange(val, val));
-                }
-                else
-                    newRanges.Add(new MyRange(
-                        Int32.Parse(temp[0]), Int32.Parse(temp[1]))
-                    );
-            }
-
-            return new MySet(newRanges.ToArray());
+            return newRanges.ToArray();
         }
     }
 }
