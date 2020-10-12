@@ -22,24 +22,42 @@ namespace MySet
 
     public class IntervalTree : IEnumerable<int>
     {
-        private TreeNode root;
-
+        private readonly TreeNode _root;
+        private int _intervalsCount;
+        public int Count { get; private set; }
         public IntervalTree(params MyRange[] intervals)
         {
             // Sort intervals by Min value
+            if (intervals.Length == 0)
+            {
+                _root = null;
+                return;
+            }
             Array.Sort(intervals, (x, y) => x.Min.CompareTo(y.Min));
-            root = new TreeNode(MergeIntervals(intervals).ToArray());
+            var mergedIntervals = MergeIntervals(intervals).ToArray();
+            _root = new TreeNode(MergeIntervals(intervals).ToArray());
+            _intervalsCount = mergedIntervals.Length;
+            Count = mergedIntervals.Aggregate(0, (sum, range) => sum + range.Count);
+        }
+
+        public IntervalTree(IntervalTree other)
+        {
+            this._root = new TreeNode(other._root);
+            this._intervalsCount = other._intervalsCount;
+            this.Count = other.Count;
         }
         
         public IEnumerator<int> GetEnumerator()
         {
-            foreach (var x in RecursiveIEnumInt(root))
+            if (_root == null)
+                yield break;
+            foreach (var x in RecursiveIEnumInt(_root))
                 yield return x;
         }
 
         public bool Contains(int x)
         {
-            var node = root;
+            var node = _root;
             while (node != null)
             {
                 if (x <= node.xMid)
@@ -58,14 +76,28 @@ namespace MySet
         
         public IntervalTree Union(IntervalTree other)
         {
-            var intervals1 = this.RecursiveIEnumRange(this.root).GetEnumerator();
-            var intervals2 = other.RecursiveIEnumRange(other.root).GetEnumerator();
+            if (this._intervalsCount == 0)
+                return new IntervalTree(other);
+            if (other._intervalsCount == 0)
+                return new IntervalTree(this);
+            var intervals1 = this.RecursiveIEnumRange(this._root).GetEnumerator();
+            var intervals2 = other.RecursiveIEnumRange(other._root).GetEnumerator();
             var newRanges = new List<MyRange>();
-            intervals1.MoveNext();
-            var lastMin = intervals1.Current.Min; // TODO: Add null catcher
-            var lastMax = intervals1.Current.Max;
             bool notEmpty1 = intervals1.MoveNext();
             bool notEmpty2 = intervals2.MoveNext();
+            int lastMin, lastMax;
+            if (intervals1.Current.Min < intervals2.Current.Min)
+            {
+                lastMin = intervals1.Current.Min;
+                lastMax = intervals1.Current.Max;
+                notEmpty1 = intervals1.MoveNext();
+            }
+            else
+            {
+                lastMin = intervals2.Current.Min;
+                lastMax = intervals2.Current.Max;
+                notEmpty2 = intervals2.MoveNext();
+            }
             while (notEmpty1 && notEmpty2)
             {
                 var min1 = intervals1.Current.Min;
@@ -110,9 +142,11 @@ namespace MySet
 
         public IntervalTree Intersection(IntervalTree other)
         {
+            if (this._intervalsCount == 0 || other._intervalsCount == 0)
+                return new IntervalTree();
             var newRanges = new List<MyRange>();
-            var intervals1 = this.RecursiveIEnumRange(this.root).GetEnumerator();
-            var intervals2 = other.RecursiveIEnumRange(other.root).GetEnumerator();
+            var intervals1 = this.RecursiveIEnumRange(this._root).GetEnumerator();
+            var intervals2 = other.RecursiveIEnumRange(other._root).GetEnumerator();
             bool notEmpty1 = intervals1.MoveNext();
             bool notEmpty2 = intervals2.MoveNext();
             while (notEmpty1 && notEmpty2)
@@ -150,13 +184,27 @@ namespace MySet
 
         public IntervalTree Difference(IntervalTree other)
         {
+            if (this._intervalsCount == 0)
+                return new IntervalTree();
+            if (other._intervalsCount == 0)
+                return new IntervalTree(this);
             var newRanges = new List<MyRange>();
-            var intervals1 = this.RecursiveIEnumRange(this.root).GetEnumerator();
-            var intervals2 = other.RecursiveIEnumRange(other.root).GetEnumerator();
+            var intervals1 = this.RecursiveIEnumRange(this._root).GetEnumerator();
+            var intervals2 = other.RecursiveIEnumRange(other._root).GetEnumerator();
             bool notEmpty1 = intervals1.MoveNext();
             bool notEmpty2 = intervals2.MoveNext();
+            if (!notEmpty1) // If first tree is empty
+                return new IntervalTree();
             var lastMin = intervals1.Current.Min;
             var lastMax = intervals1.Current.Max;
+
+            while (notEmpty1 && intervals2.Current.Min > lastMax)
+            {
+                newRanges.Add(new MyRange(lastMin, lastMax));
+                notEmpty1 = intervals1.MoveNext();
+                lastMin = intervals1.Current.Min;
+                lastMax = intervals1.Current.Max;
+            }
 
             while (notEmpty1 && notEmpty2)
             {
@@ -167,15 +215,6 @@ namespace MySet
 
                 if (lastMin > lastMax)
                 {
-                    notEmpty1 = intervals1.MoveNext();
-                    lastMin = intervals1.Current.Min;
-                    lastMax = intervals1.Current.Max;
-                    continue;
-                }
-
-                if (min2 > lastMax)
-                {
-                    newRanges.Add(new MyRange(lastMin, lastMax));
                     notEmpty1 = intervals1.MoveNext();
                     lastMin = intervals1.Current.Min;
                     lastMax = intervals1.Current.Max;
@@ -292,6 +331,17 @@ namespace MySet
                     }
                     middle -= intervals[i].Count;
                 }
+            }
+
+            public TreeNode(TreeNode other)
+            {
+                this.xMid = other.xMid;
+                this.intMin = other.intMin;
+                this.intMax = other.intMax;
+                if (other.left != null)
+                    this.left = new TreeNode(other.left) {parent = this};
+                if (other.right != null)
+                    this.right = new TreeNode(other.right) {parent = this};
             }
         }
 

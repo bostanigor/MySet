@@ -7,35 +7,40 @@ namespace MySet
 {
     public class MySet : IEnumerable<int>
     {
-        private IntervalTree tree;
+        private readonly IntervalTree _tree;
+
+        public int Count
+        {
+            get { return _tree.Count; }
+        }
         public MySet(params MyRange[] ranges)
         {
-            tree = new IntervalTree(ranges);
+            _tree = new IntervalTree(ranges);
         }
 
         private MySet(IntervalTree tree)
         {
-            this.tree = tree;
+            this._tree = tree;
         }
 
         public bool Contains(int value)
         {
-            return tree.Contains(value);
+            return _tree.Contains(value);
         }
 
         public MySet Union(MySet other)
         {
-            return new MySet(tree.Union(other.tree));
+            return new MySet(_tree.Union(other._tree));
         }
 
         public MySet Difference(MySet other)
         {
-            return new MySet(tree.Difference(other.tree));
+            return new MySet(_tree.Difference(other._tree));
         }
         
         public MySet Intersection(MySet other)
         {            
-            return new MySet(tree.Intersection(other.tree));
+            return new MySet(_tree.Intersection(other._tree));
         }
 
         public static MySet operator +(MySet left, MySet right)
@@ -49,7 +54,7 @@ namespace MySet
         
         public IEnumerator<int> GetEnumerator()
         {
-            return tree.GetEnumerator();
+            return _tree.GetEnumerator();
         }
         
         IEnumerator IEnumerable.GetEnumerator()
