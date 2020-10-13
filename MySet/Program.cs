@@ -8,11 +8,16 @@ namespace MySet
     {
         static void Main(string[] args)
         {
-            var iSet = new IntervalSet.IntervalSet(new MyRange(1, 5), new MyRange(7, 10));
+            var iSet1 = new IntervalSet.IntervalSet(
+                new MyRange(3, 6), new MyRange(50, 53),  new MyRange(-1, 2));
+            var iSet2 = new IntervalSet.IntervalSet(
+                new MyRange(0, 0), new MyRange(1, 2), new MyRange(13, 16));
+            var iSet3 = new IntervalSet.IntervalSet(
+                new MyRange(5, 10), new MyRange(0, 3));
+            var iSet = iSet1.Difference(iSet2).Union(iSet3);
             foreach (var x in iSet)
                 Console.Write($"{x} ");
-            /*var set = new MySet();
-            
+            /*
             var set1 = new MySet(HelperMethods.MyRangesFromString("1..10,22,28,30..31,38..44"));
             var set2 = new MySet(HelperMethods.MyRangesFromString("5..8,22,23,24,32..35,40..48"));
             

@@ -193,16 +193,9 @@ namespace IntervalSet
             bool notEmpty2 = intervals2.MoveNext();
             if (!notEmpty1) // If first tree is empty
                 return new IntervalTree();
+            
             var lastMin = intervals1.Current.Min;
             var lastMax = intervals1.Current.Max;
-
-            while (notEmpty1 && intervals2.Current.Min > lastMax)
-            {
-                newRanges.Add(new MyRange(lastMin, lastMax));
-                notEmpty1 = intervals1.MoveNext();
-                lastMin = intervals1.Current.Min;
-                lastMax = intervals1.Current.Max;
-            }
 
             while (notEmpty1 && notEmpty2)
             {
@@ -221,19 +214,25 @@ namespace IntervalSet
 
                 if (max2 < lastMin)
                     notEmpty2 = intervals2.MoveNext();
-                else
+                else if (min2 <= lastMax)
                 {
-                    if (min2 <= min1)
-                        lastMin = max2 + 1;
-                    else
+                    if (min2 > lastMin)
                     {
                         newRanges.Add(new MyRange(lastMin, min2 - 1));
                         if (max2 < lastMax)
                             notEmpty2 = intervals2.MoveNext();
-                        lastMin = max2 + 1;
+                        
                     }
+                    lastMin = max2 + 1;
+                }
+                else {
+                    newRanges.Add(new MyRange(lastMin, lastMax));
+                    notEmpty1 = intervals1.MoveNext();
+                    lastMin = intervals1.Current.Min;
+                    lastMax = intervals1.Current.Max;
                 }
             }
+            
             if (notEmpty1)
             {
                 newRanges.Add(new MyRange(lastMin, lastMax)); 
