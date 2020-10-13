@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
-namespace MySet
+namespace IntervalSet
 {
     public struct MyRange
     {
@@ -39,7 +38,6 @@ namespace MySet
             _intervalsCount = mergedIntervals.Length;
             Count = mergedIntervals.Aggregate(0, (sum, range) => sum + range.Count);
         }
-
         public IntervalTree(IntervalTree other)
         {
             this._root = new TreeNode(other._root);
@@ -323,8 +321,11 @@ namespace MySet
                         this.intMax = intervals[i].Max;
                         this.parent = parent;
 
-                        var leftIntervals = intervals[0..i];
-                        var rightIntervals = intervals[(i + 1)..intervals.Length];
+                        var temp = intervals.Length - (i + 1);
+                        var leftIntervals = new MyRange[i];
+                        var rightIntervals = new MyRange[temp];
+                        Array.Copy(intervals, 0, leftIntervals, 0, i);
+                        Array.Copy(intervals, i + 1, rightIntervals, 0, temp);
                         left = leftIntervals.Length > 0 ? new TreeNode(leftIntervals, this) : null;
                         right = rightIntervals.Length > 0 ? new TreeNode(rightIntervals, this) : null;
                         return;

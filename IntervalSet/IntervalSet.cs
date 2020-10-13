@@ -1,11 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace MySet
+namespace IntervalSet
 {
-    public class MySet : IEnumerable<int>
+    public class IntervalSet : IEnumerable<int>
     {
         private readonly IntervalTree _tree;
 
@@ -13,12 +11,12 @@ namespace MySet
         {
             get { return _tree.Count; }
         }
-        public MySet(params MyRange[] ranges)
+        public IntervalSet(params MyRange[] ranges)
         {
             _tree = new IntervalTree(ranges);
         }
 
-        private MySet(IntervalTree tree)
+        private IntervalSet(IntervalTree tree)
         {
             this._tree = tree;
         }
@@ -28,28 +26,28 @@ namespace MySet
             return _tree.Contains(value);
         }
 
-        public MySet Union(MySet other)
+        public IntervalSet Union(IntervalSet other)
         {
-            return new MySet(_tree.Union(other._tree));
+            return new IntervalSet(_tree.Union(other._tree));
         }
 
-        public MySet Difference(MySet other)
+        public IntervalSet Difference(IntervalSet other)
         {
-            return new MySet(_tree.Difference(other._tree));
+            return new IntervalSet(_tree.Difference(other._tree));
         }
         
-        public MySet Intersection(MySet other)
+        public IntervalSet Intersection(IntervalSet other)
         {            
-            return new MySet(_tree.Intersection(other._tree));
+            return new IntervalSet(_tree.Intersection(other._tree));
         }
 
-        public static MySet operator +(MySet left, MySet right)
+        public static IntervalSet operator +(IntervalSet left, IntervalSet right)
             => left.Union(right);
         
-        public static MySet operator -(MySet left, MySet right)
+        public static IntervalSet operator -(IntervalSet left, IntervalSet right)
             => left.Difference(right);
     
-        public static MySet operator *(MySet left, MySet right)
+        public static IntervalSet operator *(IntervalSet left, IntervalSet right)
             => left.Intersection(right);
         
         public IEnumerator<int> GetEnumerator()
@@ -62,6 +60,4 @@ namespace MySet
             return GetEnumerator();
         }
     }
-    
-    
 }

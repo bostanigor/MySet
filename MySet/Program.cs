@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IntervalSet;
 
 namespace MySet
 {
@@ -7,7 +8,10 @@ namespace MySet
     {
         static void Main(string[] args)
         {
-            var set = new MySet();
+            var iSet = new IntervalSet.IntervalSet(new MyRange(1, 5), new MyRange(7, 10));
+            foreach (var x in iSet)
+                Console.Write($"{x} ");
+            /*var set = new MySet();
             
             var set1 = new MySet(HelperMethods.MyRangesFromString("1..10,22,28,30..31,38..44"));
             var set2 = new MySet(HelperMethods.MyRangesFromString("5..8,22,23,24,32..35,40..48"));
@@ -27,7 +31,7 @@ namespace MySet
             Console.WriteLine();            
             
             foreach (var x in set5 * set6)
-                Console.Write($"{x} ");
+                Console.Write($"{x} ");*/
             
         }
     }
