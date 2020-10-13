@@ -253,7 +253,7 @@ namespace IntervalSet
             
             for (int i = 1; i < intervals.Length; i++)
             {
-                if (intervals[i].Min <= intMax)
+                if (intervals[i].Min <= intMax + 1)
                     intMax = Math.Max(intMax, intervals[i].Max);
                 else
                 {
